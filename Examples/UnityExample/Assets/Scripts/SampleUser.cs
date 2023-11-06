@@ -18,6 +18,7 @@ public class SampleUser : MonoBehaviour
 {
 
     public Text text;
+    public Text txtMessageLength;
 
     private CoreBluetoothManager manager;
     private CoreBluetoothCharacteristic characteristic;
@@ -79,8 +80,12 @@ public class SampleUser : MonoBehaviour
 
             this.command = System.Text.Encoding.ASCII.GetString(data);
             Debug.Log("update value => " + this.command);
+
+            this.txtMessageLength.text = $"Length: {data.Length}";
         });
         manager.Start();
+
+        // this.txtMessageLength = GameObject.Find("MessageLength") as Text;
     }
 
     private bool flag = false;
