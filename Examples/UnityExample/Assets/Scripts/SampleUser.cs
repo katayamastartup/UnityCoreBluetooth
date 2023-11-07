@@ -20,6 +20,11 @@ public class SampleUser : MonoBehaviour
     public Text text;
     public Text txtMessageLength;
 
+    public RawImage cameraImage;
+
+    public Texture2D sampleEarth;
+    public Texture2D sampleText;
+
     private CoreBluetoothManager manager;
     private CoreBluetoothCharacteristic characteristic;
 
@@ -82,6 +87,8 @@ public class SampleUser : MonoBehaviour
             Debug.Log("update value => " + this.command);
 
             this.txtMessageLength.text = $"Length: {data.Length}";
+
+            this.isText = (data.Length < 32);
         });
         manager.Start();
 
@@ -91,6 +98,7 @@ public class SampleUser : MonoBehaviour
     private bool flag = false;
     private byte[] value = new byte[20];
     private string command = "";
+    private bool isText = false;
 
     private float vy = 0.0f;
 
@@ -112,6 +120,15 @@ public class SampleUser : MonoBehaviour
         flag = false;
         // text.text = $"Notify: {BitConverter.ToInt32(value, 0)}";
         text.text = $"Notify: {this.command}";
+
+        byte[] imgBytes =  (this.isText == true)?
+            this.sampleEarth.EncodeToJPG():
+            this.sampleText.EncodeToJPG();
+
+        Texture2D texture = new Texture2D(100, 100, TextureFormat.ARGB32, false);
+        texture.LoadImage(imgBytes);
+        this.cameraImage.texture = texture;
+
         vy += 0.1f;
         transform.position += new Vector3(0, vy, 0);
     }
