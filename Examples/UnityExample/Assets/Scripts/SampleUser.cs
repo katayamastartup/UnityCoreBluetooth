@@ -4,6 +4,8 @@ using UnityEngine.UI;
 #if UNITY_EDITOR_OSX || UNITY_IOS
 using UnityCoreBluetooth;
 
+using BLEService;
+
 /// <summary>
 /// BLEデバイスのの設定値
 /// </summary>
@@ -27,6 +29,8 @@ public class SampleUser : MonoBehaviour
 
     private CoreBluetoothManager manager;
     private CoreBluetoothCharacteristic characteristic;
+
+    private CImageReceiver imageReceiver;
 
     // Use this for initialization
     void Start()
@@ -89,8 +93,12 @@ public class SampleUser : MonoBehaviour
             this.txtMessageLength.text = $"Length: {data.Length}";
 
             this.isText = (data.Length < 32);
+
+            imageReceiver.commandReceive(data);
         });
         manager.Start();
+
+        imageReceiver = new CImageReceiver();
 
         // this.txtMessageLength = GameObject.Find("MessageLength") as Text;
     }
