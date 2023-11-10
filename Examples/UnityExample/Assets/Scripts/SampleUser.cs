@@ -27,63 +27,20 @@ public class SampleUser : MonoBehaviour
     public Texture2D sampleEarth;
     public Texture2D sampleText;
 
-    private CoreBluetoothManager manager;
-    private CoreBluetoothCharacteristic characteristic;
+    // private CoreBluetoothManager manager;
+    // private CoreBluetoothCharacteristic characteristic;
+
+    private CBLEManager bleManager;
 
     private CImageReceiver imageReceiver;
 
     // Use this for initialization
     void Start()
     {
-        manager = CoreBluetoothManager.Shared;
+        // manager = CoreBluetoothManager.Shared;
+        bleManager = new CBLEManager(CameraMountPosition.UNKNOWN);
 
-        manager.OnUpdateState((string state) =>
-        {
-            Debug.Log("state: " + state);
-            if (state != "poweredOn") return;
-            manager.StartScan();
-        });
-
-        manager.OnDiscoverPeripheral((CoreBluetoothPeripheral peripheral) =>
-        {
-            if (peripheral.name != "")
-                Debug.Log("discover peripheral name: " + peripheral.name);
-            if ((peripheral.name != BleDevice.DEVICE_NAME ) && (peripheral.name != "M5Stack") && (peripheral.name != "M5StickC")) return;
-
-            manager.StopScan();
-            manager.ConnectToPeripheral(peripheral);
-        });
-
-        manager.OnConnectPeripheral((CoreBluetoothPeripheral peripheral) =>
-        {
-            Debug.Log("connected peripheral name: " + peripheral.name);
-            peripheral.discoverServices();
-        });
-
-        manager.OnDiscoverService((CoreBluetoothService service) =>
-        {
-            Debug.Log("discover service uuid: " + service.uuid);
-            if (service.uuid.ToLower() != BleDevice.SERVICE_UUID) return;
-            service.discoverCharacteristics();
-        });
-
-
-        manager.OnDiscoverCharacteristic((CoreBluetoothCharacteristic characteristic) =>
-        {
-            this.characteristic = characteristic;
-            string uuid = characteristic.Uuid;
-            string[] usage = characteristic.Propertis;
-            Debug.Log("discover characteristic uuid: " + uuid + ", usage: " + usage);
-            for (int i = 0; i < usage.Length; i++)
-            {
-                Debug.Log("discover characteristic uuid: " + uuid + ", usage: " + usage[i]);
-                if (usage[i] == "notify")
-                    characteristic.SetNotifyValue(true);
-            }
-        });
-
-        manager.OnUpdateValue((CoreBluetoothCharacteristic characteristic, byte[] data) =>
-        {
+        bleManager.StartBLE((byte[] data) => {
             this.value = data;
             this.flag = true;
 
@@ -99,8 +56,6 @@ public class SampleUser : MonoBehaviour
                     String.Format("image data recv complite length=>{0}", imageDataLen));
             });
         });
-
-        manager.Start();
 
         imageReceiver = new CImageReceiver();
 
@@ -149,14 +104,14 @@ public class SampleUser : MonoBehaviour
 
     void OnDestroy()
     {
-        manager.Stop();
+        bleManager.StopBLE();
     }
 
     private int counter = 0;
 
     public void Write()
     {
-        characteristic.Write(System.Text.Encoding.UTF8.GetBytes($"{counter}"));
+        bleManager.WriteBLE(System.Text.Encoding.UTF8.GetBytes($"{counter}"));
         counter++;
     }
 }
