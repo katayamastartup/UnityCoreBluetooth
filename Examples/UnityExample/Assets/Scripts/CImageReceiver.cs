@@ -49,33 +49,11 @@ namespace BLEService {
             bool stat = false;
 
             ImageCommandData imgData = new ImageCommandData();
-
-            byte[] bCmd = new byte[CBLEConstant.COMMAND_LENGTH];
-            unsafe {
-                fixed(byte* nativeCmd = command) {
-                    imgData = *(ImageCommandData*)nativeCmd;
-                }
-
-                System.Runtime.InteropServices.Marshal.Copy
-                    ((System.IntPtr)imgData.command, bCmd, 0, CBLEConstant.COMMAND_LENGTH);
-            }
-            string cmd = System.Text.Encoding.ASCII.GetString(bCmd).TrimEnd('\0');
-
-            ImageCommandData2 imgData2 = new ImageCommandData2();
-            int size = Marshal.SizeOf(imgData2);
-
+            int size = Marshal.SizeOf(imgData);
             System.IntPtr ptr = Marshal.AllocHGlobal(size);
             Marshal.Copy(command, 0, ptr, size);
-            imgData2 = (ImageCommandData2)Marshal.PtrToStructure(ptr, typeof(ImageCommandData2));
+            imgData = (ImageCommandData)Marshal.PtrToStructure(ptr, typeof(ImageCommandData));
             Marshal.FreeHGlobal(ptr);
-
-            // byte[] bCmd2 = new byte[CBLEConstant.COMMAND_LENGTH];
-
-            // unsafe {
-            //     System.Runtime.InteropServices.Marshal.Copy(
-            //         (System.IntPtr)imgData2.command, bCmd2, 0, CBLEConstant.COMMAND_LENGTH);
-            // }
-            // string cmd2 = System.Text.Encoding.ASCII.GetString(bCmd2, 0, CBLEConstant.COMMAND_LENGTH);
 
             return (stat);
         }

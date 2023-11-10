@@ -25,31 +25,8 @@ namespace BLEService {
     /// <summary>
     /// Imageコマンドデータ
     /// </summary>
-    [StructLayout(LayoutKind.Explicit)]
-    unsafe struct ImageCommandData {
-        /// <summary>コマンド文字列：START or DATA or END</summary>
-        [FieldOffset(0)]
-        public fixed byte command[CBLEConstant.COMMAND_LENGTH];
-
-        /// <summary>シーケンス番号</summary>
-        [FieldOffset(8)]
-        public fixed uint sequenceNumber[1];
-
-        /// <summary>Imageデータ長さ/送信長さ</summary>
-        [FieldOffset(12)]
-        public fixed ushort dataLength[1];
-
-        /// <summary>送信分割番号</summary>
-        [FieldOffset(14)]
-        public fixed ushort splitNumber[1];
-
-        /// <summary>Imageデータ:分割で受信</summary>
-        [FieldOffset(16)]
-        public fixed byte imageDataArray[CBLEConstant.IMAGE_DATA_SIZE];
-    };
-
     [StructLayout(LayoutKind.Sequential)]
-    struct ImageCommandData2 {
+    struct ImageCommandData {
         /// <summary>コマンド文字列：START or DATA or END</summary>
         [MarshalAs(UnmanagedType.ByValTStr,SizeConst=CBLEConstant.COMMAND_LENGTH)]
         public string command;
