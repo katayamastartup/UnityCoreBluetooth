@@ -20,6 +20,18 @@ namespace BLEService {
 
         /// <summary>Imageデータ長さ</summary>
         public const int IMAGE_DATA_SIZE = BLE_MAX_SIZE - COMMAND_DATA_LENGTH;
+
+        /// <summary>分割送信完了の送信分割番号 </summary>
+        public const ushort SPLIT_END_NUM = 0xffff;
+
+        /// <summary>初期状態 </summary>
+        public const string CMD_STRING_NATURAL = "NATURAL";
+        /// <summary>開始コマンド </summary>
+        public const string CMD_STRING_START = "START";
+        /// <summary>データ送信コマンド </summary>
+        public const string CMD_STRING_DATA = "DATA";
+        /// <summary>終了コマンド </summary>
+        public const string CMD_STRING_END = "END";
     }
 
     /// <summary>

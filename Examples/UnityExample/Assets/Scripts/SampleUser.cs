@@ -87,15 +87,19 @@ public class SampleUser : MonoBehaviour
             this.value = data;
             this.flag = true;
 
-            this.command = System.Text.Encoding.ASCII.GetString(data);
+            this.command = System.Text.Encoding.ASCII.GetString(data).TrimEnd('\0');
             Debug.Log("update value => " + this.command);
 
             this.txtMessageLength.text = $"Length: {data.Length}";
 
             this.isText = (data.Length < 32);
 
-            imageReceiver.commandReceive(data);
+            imageReceiver.commandReceive(data, (byte[] imgData, ushort imageDataLen) =>{
+                Debug.Log(
+                    String.Format("image data recv complite length=>{0}", imageDataLen));
+            });
         });
+
         manager.Start();
 
         imageReceiver = new CImageReceiver();
@@ -124,7 +128,9 @@ public class SampleUser : MonoBehaviour
             transform.position += new Vector3(0, vy, 0);
         }
         this.transform.Rotate(2, -3, 4);
+
         if (flag == false) return;
+
         flag = false;
         // text.text = $"Notify: {BitConverter.ToInt32(value, 0)}";
         text.text = $"Notify: {this.command}";
