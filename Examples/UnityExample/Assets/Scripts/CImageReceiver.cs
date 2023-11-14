@@ -47,7 +47,7 @@ namespace BLEService {
             get {
                 byte[] buffer = this._imageDataBuffer;
                 // Imageデータバッファ解放
-                this._imageDataBuffer = null;
+                // this._imageDataBuffer = null;
                 return buffer;
             }
         }
@@ -92,10 +92,20 @@ namespace BLEService {
                     // フェーズ更新
                     this._phase = ReceivePhase.DATA;
 
+                    //  this.debugPrint(
+                    //         String.Format("recv phase set DATA at sequenceNumber {1}",
+                    //             imgData.splitNumber, imgData.sequenceNumber));
+
                     break;
                 case CBLEConstant.CMD_STRING_DATA:
                 //  データ受信
                     if ( (this._phase != ReceivePhase.DATA) || (this._sequenceNumber != imgData.sequenceNumber) ) {
+
+                        // フェーズ更新
+                        // this._phase = ReceivePhase.END;
+                        // シーケンス番号を強制的に合わせる
+                        // this._sequenceNumber = imgData.sequenceNumber;
+
                         this.debugPrint(
                             String.Format("recv phase DATA but now phase =>{0} or sequenceNumber is unmatch {1}/{2}",
                                 this._phase, this._sequenceNumber, imgData.sequenceNumber));
@@ -113,6 +123,10 @@ namespace BLEService {
                     // 分割が最後の場合はフェーズ更新
                     if (imgData.splitNumber == CBLEConstant.SPLIT_END_NUM) {
                         this._phase = ReceivePhase.END;
+
+                        //  this.debugPrint(
+                        //     String.Format("recv phase set END at splitNumber:{1} / sequenceNumber {2}",
+                        //         imgData.splitNumber, imgData.sequenceNumber));
                     }
 
                     break;
@@ -126,7 +140,7 @@ namespace BLEService {
                     }
                     // Imageデータ受信完了のコールバック
                     ushort dataLen = (ushort)(this._imageDataBuffer.Length);
-                    onCompleteImageRecv(this.ImageDataBuffer, dataLen);
+                    onCompleteImageRecv(this._imageDataBuffer, dataLen);
 
                     // Imageデータバッファ解放
                     // this._imageDataBuffer =  null; => ImageDataBuffer getterで実施

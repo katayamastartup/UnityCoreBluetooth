@@ -45,11 +45,11 @@ public class SampleUser : MonoBehaviour
             this.flag = true;
 
             this.command = System.Text.Encoding.ASCII.GetString(data).TrimEnd('\0');
-            Debug.Log("update value => " + this.command);
+            // Debug.Log("update value => " + this.command);
 
             this.txtMessageLength.text = $"Length: {data.Length}";
 
-            this.isText = (data.Length < 32);
+            this.isText = (this.command != CBLEConstant.CMD_STRING_DATA);
 
             imageReceiver.commandReceive(data, (byte[] imgData, ushort imageDataLen) =>{
                 Debug.Log(
@@ -72,17 +72,17 @@ public class SampleUser : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (this.transform.position.y < 0)
-        {
-            vy = 0.0f;
-            transform.position = new Vector3(0, 0, 0);
-        }
-        else
-        {
-            vy -= 0.006f;
-            transform.position += new Vector3(0, vy, 0);
-        }
-        this.transform.Rotate(2, -3, 4);
+        // if (this.transform.position.y < 0)
+        // {
+        //     vy = 0.0f;
+        //     transform.position = new Vector3(0, 0, 0);
+        // }
+        // else
+        // {
+        //     vy -= 0.006f;
+        //     transform.position += new Vector3(0, vy, 0);
+        // }
+        // this.transform.Rotate(2, -3, 4);
 
         if (flag == false) return;
 
@@ -94,12 +94,15 @@ public class SampleUser : MonoBehaviour
             this.sampleEarth.EncodeToJPG():
             this.sampleText.EncodeToJPG();
 
-        Texture2D texture = new Texture2D(100, 100, TextureFormat.ARGB32, false);
-        texture.LoadImage(imgBytes);
+        this.cameraImage.texture =  null;
+        Texture2D texture = new Texture2D(320, 240, TextureFormat.RGB565, false);
+        // texture.LoadImage(imgBytes);
+        texture.LoadImage(imageReceiver.ImageDataBuffer);
+
         this.cameraImage.texture = texture;
 
         vy += 0.1f;
-        transform.position += new Vector3(0, vy, 0);
+        // transform.position += new Vector3(0, vy, 0);
     }
 
     void OnDestroy()
